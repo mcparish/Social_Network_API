@@ -1,9 +1,9 @@
-import { Users } from '../models/userModel';
+const { User } = require('../models');
 
 module.exports = {
-    async getAllUsers(_, res) {
+async getAllUsers(_, res) {
         try {
-            const dbUserData = await Users.find({});
+            const dbUserData = await User.find({});
             res.json(dbUserData);
         } catch (err) {
             console.log(err);
@@ -13,7 +13,7 @@ module.exports = {
 
     async getUserById({ params }, res) {
         try {
-            const dbUserData = await Users
+            const dbUserData = await User
                 .findById(params.id)
                 .populate({
                     path: 'friends',
@@ -31,7 +31,7 @@ module.exports = {
 
     async createUser({ body }, res) {
         try {
-            const dbUserData = await Users.create(body);
+            const dbUserData = await User.create(body);
             res.json(dbUserData);
         } catch (err) {
             console.log(err);
@@ -41,7 +41,7 @@ module.exports = {
 
     async deleteUser({ params }, res) {
         try {
-            const dbUserData = await Users.findByIdAndDelete(params.id);
+            const dbUserData = await User.findByIdAndDelete(params.id);
             if (!dbUserData) {
                 return res.status(404).json({ message: 'User not found' });
             }
@@ -54,7 +54,7 @@ module.exports = {
 
     async updateUser({ params, body }, res) {
         try {
-            const dbUserData = await Users.findByIdAndUpdate(params.id, body, { new: true });
+            const dbUserData = await User.findByIdAndUpdate(params.id, body, { new: true });
             if (!dbUserData) {
                 return res.status(404).json({ message: 'User not found' });
             }
@@ -64,5 +64,40 @@ module.exports = {
             res.status(500).json({ message: err.message });
         }
     },
+    async addFriend({ params }, res) {
+        try {
+            const dbUserData = await User.findByIdAndUpdate(
+                params.userId,
+                { $addToSet: { friends: params.friendId } },
+                { new: true }
+            );
+            
+            return res.json(dbUserData)
+                
+            if (!dbUserData) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: err.message });
+        }
+    },
+    async deleteFriend({ params }, res) {
+        try {
+            const dbUserData = await User.findByIdAndUpdate(
+                params.userId,
+                { $pull: { friends: params.friendId } },
+                { new: true }
+            );
+
+            return res.json(dbUserData)
+            
+            if (!dbUserData) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: err.message });
+        }
+    }
 };
-   

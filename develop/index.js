@@ -1,7 +1,23 @@
-const { connect, connection } = require('mongoose');
+const express = require('express');
+const db = require('./config/connection');
+const routes = require('./routes');
 
-const connectionString = 'mongodb://127.0.0.1:27017/socialNetworkDB';
+const cwd = process.cwd();
 
-connect(connectionString);
+const PORT = process.env.PORT || 3001;
+const app = express();
 
-module.exports = connection;
+// Note: not necessary for the Express server to function. This just helps indicate what activity's server is running in the terminal.
+const activity = cwd.includes('social_network_api')
+    ? cwd.split('social_network_api')[1]
+    : cwd;
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(routes);
+
+db.once('open', () => {
+    app.listen(PORT, () => {
+        console.log(`API server for ${activity} running on port ${PORT}!`);
+    });
+});

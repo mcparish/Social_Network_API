@@ -8,7 +8,7 @@ module.exports = {
             res.json(dbThoughtData);
         } catch (err) {
             console.log(err);
-            res.status(500).json(err);
+            res.status(500).json({ message: err.message });
         }
     },
     // get one thought by id
