@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-
+const reactionSchema = require('./reaction');
 const thoughtSchema = new Schema(
     {
         thoughtText: {
@@ -17,6 +17,7 @@ const thoughtSchema = new Schema(
             type: String,
             required: 'You need to leave a username!',
         },
+        reactions:[reactionSchema]
 
     },
     {

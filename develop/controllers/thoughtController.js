@@ -75,5 +75,43 @@ module.exports = {
             console.log(err);
             res.status(500).json(err);
         }
+    },
+    async addReaction({ params, body }, res) {
+        try {
+            const dbThoughtData = await Thought.findByIdAndUpdate(
+                {_id:params.thoughtID},
+                { $addToSet: { reactions: body } },
+                { new: true }
+            );
+
+            
+
+            if (!dbThoughtData) {
+                return res.status(404).json({ message: 'reaction not found' });
+            }
+            return res.json(dbThoughtData)
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: err.message });
+        }
+    },
+    async deleteReaction({ params }, res) {
+        try {
+            const dbThoughtData = await Thought.findByIdAndUpdate(
+                {_id:params.thoughtID},
+                { $pull: { reactions: {_id: params.reactionID} } },
+                { new: true }
+            );
+
+            
+
+            if (!dbThoughtData) {
+                return res.status(404).json({ message: 'thought not found' });
+            }
+            return res.json(dbThoughtData)
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: err.message });
+        }
     }
 };

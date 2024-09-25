@@ -1,34 +1,36 @@
-const { Reaction } = require('../models');
+const { Thought } = require('../models');
 
 module.exports = {
-    // get all reactions
-    async getAllReactions(req, res) {
-        try {
-            const dbReactionData = await Reaction.find({});
-            res.json(dbReactionData);
-        } catch (err) {
-            console.log(err);
-            res.status(500).json(err);
-        }
-    },
-    // get one reaction by id
-    async getReactionById({ params }, res) {
-        try {
-            const dbReactionData = await Reaction.findById(params.id);
-            if (!dbReactionData) {
-                return res.status(404).json({ message: 'Reaction not found' });
-            }
-            res.json(dbReactionData);
-        } catch (err) {
-            console.log(err);
-            res.status(500).json(err);
-        }
-    },
     // create a new reaction
-    async createReaction({ body }, res) {
+    async createReaction({ params, body }, res) {
         try {
-            const dbReactionData = await Reaction.create(body);
-            res.json(dbReactionData);
+            const dbThoughtData = await Thought.findByIdAndUpdate(
+                params.thoughtId,
+                { $push: { reactions: body } },
+                { new: true, runValidators: true }
+            );
+            if (!dbThoughtData) {
+                return res.status(404).json({ message: 'Thought not found' });
+            }
+            res.json(dbThoughtData);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+
+    // delete a reaction
+    async deleteReaction({ params }, res) {
+        try {
+            const dbThoughtData = await Thought.findByIdAndUpdate(
+                params.thoughtId,
+                { $pull: { reactions: { reactionId: params.reactionId } } },
+                { new: true }
+            );
+            if (!dbThoughtData) {
+                return res.status(404).json({ message: 'Thought not found' });
+            }
+            res.json(dbThoughtData);
         } catch (err) {
             console.log(err);
             res.status(500).json(err);

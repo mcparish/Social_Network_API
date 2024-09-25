@@ -5,7 +5,7 @@ const reactionSchema = {
         type: Schema.Types.ObjectId,
         default: () => new Types.ObjectId()
     },
-    reactionBody: {
+    reactionText: {
         type: String,
         required: 'You need to leave a reaction!',
         maxlength: 280,
@@ -18,6 +18,6 @@ const reactionSchema = {
     },
 };
 
-const Reaction = model('Reaction', reactionSchema);
 
-module.exports = Reaction;
+
+module.exports = reactionSchema;
