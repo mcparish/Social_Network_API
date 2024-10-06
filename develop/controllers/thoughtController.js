@@ -56,14 +56,14 @@ module.exports = {
         }
     },
     // delete a thought
-    async deleteThought({ params }, res) {
+    async deleteThought({ body, params }, res) {
         try {
             const dbThoughtData = await Thought.findByIdAndDelete(params.id);
             if (!dbThoughtData) {
                 return res.status(404).json({ message: 'Thought not found' });
             }
             const dbUserData = await User.findByIdAndUpdate(
-                dbThoughtData.userId,
+                body.userId,
                 { $pull: { thoughts: dbThoughtData._id } },
                 { new: true }
             );
@@ -79,12 +79,12 @@ module.exports = {
     async addReaction({ params, body }, res) {
         try {
             const dbThoughtData = await Thought.findByIdAndUpdate(
-                {_id:params.thoughtID},
+                { _id: params.thoughtID },
                 { $addToSet: { reactions: body } },
                 { new: true }
             );
 
-            
+
 
             if (!dbThoughtData) {
                 return res.status(404).json({ message: 'reaction not found' });
@@ -98,12 +98,12 @@ module.exports = {
     async deleteReaction({ params }, res) {
         try {
             const dbThoughtData = await Thought.findByIdAndUpdate(
-                {_id:params.thoughtID},
-                { $pull: { reactions: {_id: params.reactionID} } },
+                { _id: params.thoughtID },
+                { $pull: { reactions: { _id: params.reactionID } } },
                 { new: true }
             );
 
-            
+
 
             if (!dbThoughtData) {
                 return res.status(404).json({ message: 'thought not found' });

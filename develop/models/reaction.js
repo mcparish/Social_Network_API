@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
 
 const reactionSchema = {
     reactionId: {
@@ -10,7 +10,7 @@ const reactionSchema = {
         required: 'You need to leave a reaction!',
         maxlength: 280,
     },
-   
+
     createdAt: {
         type: Date,
         default: Date.now,
